@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>
+            Sample Click Event
+        </title>
+        <style>
+            button {
+                color: white;
+                width: 70px;
+                height: 30px;
+                cursor: pointer;
+                outline: none;
+                font-size: 20px;
+                font-weight: 100px;
+            }
+            .like {
+                background-color: blue;
+            }
+            .unlike {
+                background-color: green;
+            }
+        </style>
+        <script>
+            function onButtonClick(element) {
+                if(element.textContent === 'Like') {
+                    element.textContent = 'Unlike';
+                    element.setAttribute('class', 'unlike');
+                } else {
+                    element.textContent = 'Like';
+                    element.setAttribute('class', 'like');
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <button class='like' onclick="onButtonClick(this)">Like</button>
+    </body>
+</html>

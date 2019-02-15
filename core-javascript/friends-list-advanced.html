@@ -1,0 +1,191 @@
+<html>
+    <head>
+        <title>Friends List</title>
+        <style>
+            button {
+                cursor: pointer;
+                outline: none;
+            }
+            .show-hide-friends, .add-friend {
+                width: 120px;
+                height: 30px;
+                font-size: 15px;
+            }
+            .show-friends, .like-btn {
+                background-color: white;
+                color: dodgerblue;
+                border-color: #2196F3;
+            }
+            .show-friends:hover, .like-btn:hover {
+                background-color: #2196F3;
+                color: white;
+            }
+            .hide-friends, .unlike-btn, .add-friend {
+                border-color: #4CAF50;
+                color: green;
+            }
+            .hide-friends:hover, .unlike-btn:hover, .add-friend:hover {
+                background-color: #4CAF50;
+                color: white;
+            }
+            #friends-list {
+                margin: 0;
+                padding: 0;
+                list-style-type: none;
+            }
+            #friends-list li {
+                font-size: 20px;
+                margin-top: 10px;
+            }
+            .friend-name {
+                display: inline-block;
+                width: 150px;
+            }
+            .like-unlike {
+                display: inline-block;
+            }
+            .like-btn, .unlike-btn, .delete-btn {
+                width: 60px;
+                height: 30px;
+                font-size: 15px;
+            }
+            .delete-btn {
+                margin-left: 10px;
+                border-color: #FF4136;
+                color: red;
+            }
+            .delete-btn:hover {
+                background-color: #FF4136;
+                color: white;
+            }
+            .delete-success {
+                border-color: #4CAF50;
+                color: white;
+                background-color: #4CAF50;
+                width: 279px;
+                line-height: 30px;
+            }
+            .delete-success span {
+                margin-left: 10px;
+            }
+            input {
+                height: 30px;
+                width: 157px;
+                font-size: 15px;
+                outline: none;
+            }
+            input::placeholder {
+                padding-left: 10px;
+            }
+            .add-friend-wrapper {
+                margin-top: 10px;
+            }
+            .error {
+                display: none;
+                margin-top: 4px;
+                color: red;
+                width: 150px;
+            }
+        </style>
+        <script>
+            var friends = [ 
+                {
+                    name: 'Roger',
+                    liked: false
+                },
+                {
+                    name: 'Serena',
+                    liked: false
+                },
+                {
+                    name: 'Rafel',
+                    liked: false
+                }
+            ];
+            function likeUnlike(element, friendName) {
+                var friendObject = '';
+                // search the friend in array
+                for(var i=0; i<friends.length; i++) {
+                    if(friends[i].name === friendName) {
+                        friendObject = friends[i];
+                    }
+                }
+
+                if(element.textContent === 'Like') {
+                    element.textContent = 'Unlike';
+                    element.setAttribute('class', 'unlike-btn');
+                    friendObject.liked = true;
+                } else {
+                    element.textContent = 'Like';
+                    element.setAttribute('class', 'like-btn');
+                    friendObject.liked = false;
+                }
+            }
+            function deleteFriend(element, index) {
+                // this is an li element
+                var friendElement = document.getElementById('friend-request-' + index);
+                friendElement.innerHTML = '<div class="delete-success"><span>Friend request deleted</span></div>';
+                setTimeout(function() {
+                    friendElement.remove();
+                }, 2000); // 2 sec delay
+                // delete from array
+                // please read the splice method documentation
+                friends.splice(index, 1);
+            }
+            function addFriend() {
+                var friendNameInputElement = document.getElementById('friend-name');
+                var friendName = friendNameInputElement.value;
+                if(friendName.trim() === '') {
+                    // show an error
+                    var errorElement = document.getElementsByClassName('error');
+                    if(errorElement.length > 0) {
+                        errorElement[0].style.display = 'block';
+                    }
+                } else {
+                    // add a friend in a list
+                    friends.unshift({
+                        name: friendName,
+                        liked: false
+                    });
+                    var showHideFriendsButtonElement = document.getElementsByClassName('show-hide-friends');
+                    showHideFriendsButtonElement[0].textContent = 'Show Friends';
+                    showHideFriendsList(showHideFriendsButtonElement[0]);
+                    friendNameInputElement.value = '';
+                }
+            }
+            function onAddFreindKeyPress() {
+                // hide the error since user is typing
+                var errorClass = document.getElementsByClassName('error');
+                errorClass[0].style.display = 'none';
+            }
+            function showHideFriendsList(element) {
+                var friendsListElement = document.getElementById('friends-list');
+                if(element.textContent === 'Show Friends') {
+                    element.textContent = 'Hide Friends';
+                    element.setAttribute('class', 'show-hide-friends hide-friends');
+                    var friendsList = '';
+                    for(var i=0; i<friends.length; i++) {
+                        var likeUnlikeButtonClassName = (friends[i].liked === true ? 'unlike-btn' : 'like-btn');
+                        var likeUnlikeButtonText = (friends[i].liked === true) ? 'Unlike' : 'Like';
+                        friendsList = friendsList + '<li id="friend-request-'+i+'"><div class="friend-name">' +friends[i].name+ '</div><div class="like-unlike"><button class="' +likeUnlikeButtonClassName+ '" onclick="likeUnlike(this, \''+friends[i].name+'\')">' +likeUnlikeButtonText+ '</button><button class="delete-btn" onclick="deleteFriend(this,'+i+')">Delete</button></div></li>';
+                    }
+                    friendsListElement.innerHTML = friendsList;
+                    friendsListElement.style.display = 'block';
+                } else {
+                    element.textContent = 'Show Friends';
+                    element.setAttribute('class', 'show-hide-friends show-friends');
+                    friendsListElement.style.display = 'none';
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <button class="show-hide-friends show-friends" onclick="showHideFriendsList(this)">Show Friends</button>
+        <ol id="friends-list"></ol>
+        <div class="add-friend-wrapper">
+            <input onkeypress="onAddFreindKeyPress()" id="friend-name" type="text" placeholder="Friend name" />
+            <button onclick="addFriend()" class="add-friend">Add Friend</button>
+        </div>
+        <div class="error">This field cannot be empty</div>
+    </body>
+</html>
